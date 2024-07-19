@@ -3,13 +3,17 @@ using UnityEngine;
 
 public class GridSpawner : MonoBehaviour
 {
-    public GameObject squarePrefab; // Префаб квадрата
-    public int gridSize; // Размер сетки
-    public float spacing; // Расстояние между квадратами
-    public float spawnDelay; // Задержка между спавнами
+    [SerializeField] private GameObject squarePrefab;
+    [SerializeField] private int gridSize;
+    [SerializeField] private float spacing;
+    [SerializeField] private float spawnDelay;
+
+    public GameObject[,] Grid { get; private set; }
 
     private void Awake()
     {
+        Grid = new GameObject[gridSize, gridSize];
+        
         StartCoroutine(SpawnGrid());
     }
 
@@ -19,11 +23,10 @@ public class GridSpawner : MonoBehaviour
         {
             for (var x = 0; x < gridSize; x++)
             {
-                // Рассчитываем позицию для нового квадрата
-                var spawnPosition = new Vector3(transform.position.x + x * spacing, transform.position.y - y * spacing, 0);
-                // Создаем новый квадрат
-                Instantiate(squarePrefab, spawnPosition, Quaternion.identity);
-                // Ждем перед созданием следующего квадрата
+                var spawnPosition = new Vector3(transform.position.x + x * spacing,
+                    transform.position.y - y * spacing, 0);
+                
+                Grid[y, x] = Instantiate(squarePrefab, spawnPosition, Quaternion.identity);
                 yield return new WaitForSeconds(spawnDelay);
             }
         }
